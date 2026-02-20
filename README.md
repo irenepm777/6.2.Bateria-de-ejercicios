@@ -17,7 +17,8 @@ Se debe diseñar una clase que represente a un usuario de una plataforma de stre
 ## 3. Diseño UML
 La clase Usuario contiene atributos privados para el nombre de usuario y la contraseña.
 El correo electrónico es público.
-El método cambiarPassword es público, mientras que validarEmail es privado porque es un método interno de validación.
+El método cambiarPassword es público y devuelve un valor booleano que indica si el cambio se ha realizado correctamente.
+El método validarEmail es privado y devuelve un valor booleano, ya que se trata de una validación interna.
 
 
 ### 4. Diagrama de clases (Mermaid)
@@ -27,8 +28,8 @@ classDiagram
         -String nombreUsuario
         -String contraseña
         +String correo
-        +cambiarPassword(String nueva)
-        -validarEmail()
+        +boolean cambiarPassword(String nueva)
+        -boolean validarEmail()
     }
 ```
 
@@ -48,8 +49,8 @@ Un Estudiante es una Persona, pero además posee información académica adicion
 
 
 ### 3. Diseño UML
-La clase Persona actúa como clase base y contiene los atributos comunes a cualquier persona: nombre y DNI.  
-La clase Estudiante hereda de Persona y añade sus propios atributos: número de expediente y nota media.  
+La clase Persona actúa como clase base y contiene los atributos comunes a cualquier persona: nombre y DNI.
+La clase Estudiante hereda de Persona y añade sus propios atributos: número de expediente y nota media.
 
 No se repiten los atributos heredados en la clase Estudiante, ya que estos provienen de la clase padre.
 
@@ -67,7 +68,7 @@ classDiagram
         -double notaMedia
     }
 
-    Persona <-- Estudiante
+    Persona <|-- Estudiante
 ```
 
 
@@ -86,9 +87,9 @@ Se debe modelar una Computadora y sus componentes, diferenciando entre relacione
 
 
 ### 3. Diseño UML
-La Computadora tiene una relación de composición con la PlacaBase, ya que esta no puede existir de forma independiente: si la computadora se destruye, la placa base también.
+La Computadora tiene una relación de composición con la PlacaBase, ya que esta no puede existir de forma independiente.
 
-Por otro lado, la Computadora tiene una relación de agregación con el Ratón, ya que el ratón puede existir y utilizarse de forma independiente aunque la computadora deje de existir.
+La relación entre Computadora y Ratón es de agregación, ya que el ratón puede existir independientemente del ciclo de vida de la computadora.
 
 
 ### 4. Diagrama de clases (Mermaid)
@@ -98,8 +99,8 @@ classDiagram
     class PlacaBase
     class Raton
 
-    Computadora *-- PlacaBase : composición
-    Computadora o-- Raton : agregación
+    Computadora *-- PlacaBase
+    Computadora o-- Raton
 ```
 
 
@@ -120,8 +121,7 @@ Se debe modelar un Centro Comercial que alberga varias tiendas, teniendo en cuen
 Un CentroComercial puede albergar una o varias tiendas.
 Cada Tienda pertenece obligatoriamente a un único CentroComercial.
 
-La relación se representa mediante una asociación con multiplicidades, indicando que un centro tiene de 1 a muchas tiendas, mientras que cada tienda está asociada a un solo centro.
-
+La relación se modela como una agregación, ya que las tiendas pueden existir independientemente del centro comercial.
 
 ### 4. Diagrama de clases (Mermaid)
 ```mermaid
@@ -129,7 +129,7 @@ classDiagram
     class CentroComercial
     class Tienda
 
-    CentroComercial "1" -- "1..*" Tienda
+    CentroComercial "1" o-- "1..*" Tienda
 ```
 
 
@@ -149,11 +149,11 @@ Se debe diseñar un sistema de pagos flexible que permita utilizar distintos mé
 
 
 ### 3. Diseño UML
-La interfaz MetodoPago define el contrato que deben cumplir todos los métodos de pago mediante el método procesar(double importe).
+La interfaz MetodoPago define el contrato común mediante el método procesar(double importe).
 
-Las clases Tarjeta y Paypal implementan la interfaz MetodoPago, proporcionando su propia forma de procesar el pago.
+Las clases Tarjeta y Paypal realizan la interfaz MetodoPago.
 
-La clase Carrito no depende de una implementación concreta, sino que utiliza la interfaz MetodoPago de forma puntual en su método pagar, permitiendo aplicar polimorfismo.
+La clase Carrito utiliza un método de pago de forma puntual, estableciendo una relación de dependencia, lo que permite aplicar polimorfismo.
 
 
 ### 4. Diagrama de clases (Mermaid)
@@ -172,7 +172,7 @@ classDiagram
 
     MetodoPago <|.. Tarjeta
     MetodoPago <|.. Paypal
-    Carrito ..> MetodoPago : uso puntual
+    Carrito ..> MetodoPago
 ```
 
 
@@ -193,15 +193,14 @@ Se debe diseñar un sistema básico para gestionar los recursos de una bibliotec
 
 
 ### 3. Diseño UML
-La clase Recurso actúa como clase padre y representa cualquier elemento prestable de la biblioteca.  
-Contiene atributos privados comunes y métodos públicos para gestionar el préstamo y la devolución.
+La clase Recurso actúa como clase base y representa cualquier elemento prestable.
 
-Las clases Libro y Revista heredan de Recurso y añaden atributos específicos propios de cada tipo de recurso.
+Libro y Revista heredan de Recurso y añaden atributos propios.
 
-La clase Usuario representa a las personas que pueden realizar préstamos.  
-Un usuario puede tener prestados uno o varios recursos al mismo tiempo.
+La clase Usuario representa a las personas que pueden realizar préstamos.
+Un usuario puede utilizar uno o varios recursos en un momento dado.
 
-La relación entre Usuario y Recurso es una asociación con multiplicidad de uno a muchos (1 a 0..*).
+La relación entre Usuario y Recurso se modela como una dependencia, ya que el uso de los recursos es puntual (préstamo).
 
 
 ### 4. Diagrama de clases (Mermaid)
@@ -227,8 +226,8 @@ classDiagram
         -int numCarnet
     }
 
-    Recurso <|-- Libro
-    Recurso <|-- Revista
+    Recurso <|.. Libro
+    Recurso <|.. Revista
 
-    Usuario "1" -- "0..*" Recurso
+    Usuario "1" ..> "0..*" Recurso
 ```
